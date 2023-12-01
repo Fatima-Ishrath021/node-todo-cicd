@@ -7,6 +7,12 @@ pipeline {
                 git url: 'https://github.com/Fatima-Ishrath021/node-todo-cicd.git', branch: 'master'
             }
         }
+        stage('OWASP FS SCAN') {
+            steps {
+                dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'DP-Check'
+                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+            }
+        }
         stage('Build and Test'){
             steps {
                 sh 'docker build . -t fatima021/node-todo-app-cicd:latest' 
@@ -19,6 +25,11 @@ pipeline {
                     sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
                     sh "docker push fatima021/node-todo-app-cicd:latest"
                 }
+            }
+        }
+        stage("TRIVY"){
+            steps{
+                sh "trivy image fatima021/node-todo-app-cicd:latest > trivyimage.txt" 
             }
         }
         stage('Deploy to container'){
