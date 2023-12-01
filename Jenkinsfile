@@ -29,6 +29,8 @@ pipeline {
         }
         stage('Deploy to container'){
             steps{
+                sh "docker stop todo-app "
+                sh "docker rm todo-app "
                 sh "docker run -d --name todo-app -p 8000:8000 fatima021/node-todo-app-cicd:latest"
             }
         }
