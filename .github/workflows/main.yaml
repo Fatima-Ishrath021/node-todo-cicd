@@ -1,3 +1,4 @@
+#comment to make the github action run
 name: Build and push image to ECR
 
 on: push
